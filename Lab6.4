@@ -1,0 +1,59 @@
+#include <stdio.h>
+
+typedef struct {
+    int x;
+    int y;
+    void (*draw)(void);
+    void (*move)(int, int);
+} GraphicPrimitive;
+
+void graphic_primitive_draw(void) {
+}
+
+void graphic_primitive_move(int x, int y) {
+}
+
+typedef struct {
+    GraphicPrimitive primitive;
+    int radius;
+} Circle;
+
+void circle_draw(void) {
+}
+
+typedef struct {
+    GraphicPrimitive primitive;
+    int width;
+    int height;
+} Rectangle;
+
+void rectangle_draw(void) {
+}
+
+typedef struct {
+    GraphicPrimitive primitive;
+} Triangle;
+
+void triangle_draw(void) {
+}
+
+typedef struct {
+    GraphicPrimitive primitive;
+    GraphicPrimitive** elements;
+    int num_elements;
+} Group;
+
+void group_draw(void) {
+}
+
+void group_move(int x, int y) {
+}
+
+void scale_circle(Circle* circle, float factor) {
+}
+
+void scale_rectangle(Rectangle* rectangle, float factor) {
+}
+
+int main() {
+}
