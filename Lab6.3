@@ -1,32 +1,114 @@
-#include <stdio.h>
+using System;
 
-typedef struct {
-    float a;
-    float b;
-    float c;
-    float d;
-} Quaternion;
+class Quaternion
+{
+    public double W { get; set; }
+    public double X { get; set; }
+    public double Y { get; set; }
+    public double Z { get; set; }
 
-Quaternion add(Quaternion q1, Quaternion q2) {
+    public Quaternion(double w, double x, double y, double z)
+    {
+        W = w;
+        X = x;
+        Y = y;
+        Z = z;
+    }
+
+    public static Quaternion operator +(Quaternion q1, Quaternion q2)
+    {
+        return new Quaternion(q1.W + q2.W, q1.X + q2.X, q1.Y + q2.Y, q1.Z + q2.Z);
+    }
+
+    public static Quaternion operator -(Quaternion q1, Quaternion q2)
+    {
+        return new Quaternion(q1.W - q2.W, q1.X - q2.X, q1.Y - q2.Y, q1.Z - q2.Z);
+    }
+
+    public static Quaternion operator *(Quaternion q1, Quaternion q2)
+    {
+        double w = q1.W * q2.W - q1.X * q2.X - q1.Y * q2.Y - q1.Z * q2.Z;
+        double x = q1.W * q2.X + q1.X * q2.W + q1.Y * q2.Z - q1.Z * q2.Y;
+        double y = q1.W * q2.Y - q1.X * q2.Z + q1.Y * q2.W + q1.Z * q2.X;
+        double z = q1.W * q2.Z + q1.X * q2.Y - q1.Y * q2.X + q1.Z * q2.W;
+
+        return new Quaternion(w, x, y, z);
+    }
+
+    public Quaternion Conjugate()
+    {
+        return new Quaternion(W, -X, -Y, -Z);
+    }
+
+    public double Norm()
+    {
+        return Math.Sqrt(W * W + X * X + Y * Y + Z * Z);
+    }
+
+    public Quaternion Inverse()
+    {
+        double normSquared = W * W + X * X + Y * Y + Z * Z;
+        return Conjugate() / normSquared;
+    }
+
+    public static bool operator ==(Quaternion q1, Quaternion q2)
+    {
+        return q1.W == q2.W && q1.X == q2.X && q1.Y == q2.Y && q1.Z == q2.Z;
+    }
+
+    public static bool operator !=(Quaternion q1, Quaternion q2)
+    {
+        return !(q1 == q2);
+    }
+
+    public static implicit operator Matrix(Quaternion q)
+    {
+        double x = q.X;
+        double y = q.Y;
+        double z = q.Z;
+        double w = q.W;
+
+        double x2 = x * x;
+        double y2 = y * y;
+        double z2 = z * z;
+        double w2 = w * w;
+
+        double xy = x * y;
+        double xz = x * z;
+        double xw = x * w;
+        double yz = y * z;
+        double yw = y * w;
+        double zw = z * w;
+
+        return new Matrix(1 - 2 * y2 - 2 * z2, 2 * xy - 2 * zw, 2 * xz + 2 * yw, 0,
+                          2 * xy + 2 * zw, 1 - 2 * x2 - 2 * z2, 2 * yz - 2 * xw, 0,
+                          2 * xz - 2 * yw, 2 * yz + 2 * xw, 1 - 2 * x2 - 2 * y2, 0,
+                          0, 0, 0, 1);
+    }
 }
 
-Quaternion subtract(Quaternion q1, Quaternion q2) {
+class Matrix
+{
+
 }
 
-Quaternion multiply(Quaternion q1, Quaternion q2) {
-}
+class Program
+{
+    static void Main()
+    {
+        Quaternion q1 = new Quaternion(1, 2, 3, 4);
+        Quaternion q2 = new Quaternion(5, 6, 7, 8);
 
-float norm(Quaternion q) {
-}
+        Quaternion sum = q1 + q2;
+        Quaternion difference = q1 - q2;
+        Quaternion product = q1 * q2;
 
-Quaternion conjugate(Quaternion q) {
-}
+        Console.WriteLine("Sum: " + sum.W + ", " + sum.X + ", " + sum.Y + ", " + sum.Z);
+        Console.WriteLine("Difference: " + difference.W + ", " + difference.X + ", " + difference.Y + ", " + difference.Z);
+        Console.WriteLine("Product: " + product.W + ", " + product.X + ", " + product.Y + ", " + product.Z);
 
-Quaternion inverse(Quaternion q) {
-}
-
-int are_equal(Quaternion q1, Quaternion q2) {
-}
-
-int main() {
+        Console.WriteLine("Conjugate: " + q1.Conjugate().W + ", " + q1.Conjugate().X + ", " + q1.Conjugate().Y + ", " + q1.Conjugate().Z);
+        Console.WriteLine("Norm: " + q1.Norm());
+        Console.WriteLine("Inverse: " + q1.Inverse().W + ", " + q1.Inverse().X + ", " + q1.Inverse().Y + ", " + q1.Inverse().Z);
+    }
 }
