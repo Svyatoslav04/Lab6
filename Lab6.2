@@ -1,22 +1,53 @@
-#include <stdio.h>
+class MathOperations
+{
+    public static int Add(int a, int b)
+    {
+        return a + b;
+    }
 
-typedef struct {
-    int (*add)(int, int);
-    int (*subtract)(int, int);
-    int (*multiply)(int, int);
-} MathOperations;
+    public static double Add(double a, double b)
+    {
+        return a + b;
+    }
 
-int add(int a, int b) {
-    return a + b;
+    public static int Add(int[] numbers)
+    {
+        int result = 0;
+        foreach (int number in numbers)
+        {
+            result += number;
+        }
+        return result;
+    }
+
+    public static double Add(double[] numbers)
+    {
+        double result = 0;
+        foreach (double number in numbers)
+        {
+            result += number;
+        }
+        return result;
+    }
+   
 }
 
-int subtract(int a, int b) {
-    return a - b;
-}
+class Program
+{
+    static void Main()
+    {
+        int sumInt = MathOperations.Add(5, 10);
+        double sumDouble = MathOperations.Add(3.5, 2.5);
 
-int multiply(int a, int b) {
-    return a * b;
-}
+        int[] intArray = { 1, 2, 3, 4, 5 };
+        double[] doubleArray = { 1.5, 2.5, 3.5, 4.5, 5.5 };
 
-int main() {
+        int arraySumInt = MathOperations.Add(intArray);
+        double arraySumDouble = MathOperations.Add(doubleArray);
+
+        Console.WriteLine("Sum Int: " + sumInt);
+        Console.WriteLine("Sum Double: " + sumDouble);
+        Console.WriteLine("Array Sum Int: " + arraySumInt);
+        Console.WriteLine("Array Sum Double: " + arraySumDouble);
+    }
 }
