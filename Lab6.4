@@ -1,59 +1,137 @@
-#include <stdio.h>
+using System;
+using System.Collections.Generic;
 
-typedef struct {
-    int x;
-    int y;
-    void (*draw)(void);
-    void (*move)(int, int);
-} GraphicPrimitive;
+abstract class GraphicPrimitive
+{
+    public int X { get; set; }
+    public int Y { get; set; }
 
-void graphic_primitive_draw(void) {
+    public abstract void Draw();
+    public abstract void Move(int x, int y);
 }
 
-void graphic_primitive_move(int x, int y) {
+class Circle : GraphicPrimitive
+{
+    public int Radius { get; set; }
+
+    public override void Draw()
+    {
+        Console.WriteLine($"Draw circle at ({X}, {Y}) with radius {Radius}");
+    }
+
+    public override void Move(int x, int y)
+    {
+        X += x;
+        Y += y;
+    }
 }
 
-typedef struct {
-    GraphicPrimitive primitive;
-    int radius;
-} Circle;
+class Rectangle : GraphicPrimitive
+{
+    public int Width { get; set; }
+    public int Height { get; set; }
 
-void circle_draw(void) {
+    public override void Draw()
+    {
+        Console.WriteLine($"Draw rectangle at ({X}, {Y}) with width {Width} and height {Height}");
+    }
+
+    public override void Move(int x, int y)
+    {
+        X += x;
+        Y += y;
+    }
 }
 
-typedef struct {
-    GraphicPrimitive primitive;
-    int width;
-    int height;
-} Rectangle;
+class Triangle : GraphicPrimitive
+{
+    public override void Draw()
+    {
+        Console.WriteLine($"Draw triangle at ({X}, {Y})");
+    }
 
-void rectangle_draw(void) {
+    public override void Move(int x, int y)
+    {
+        X += x;
+        Y += y;
+    }
 }
 
-typedef struct {
-    GraphicPrimitive primitive;
-} Triangle;
+class Group : GraphicPrimitive
+{
+    private List<GraphicPrimitive> Primitives = new List<GraphicPrimitive>();
 
-void triangle_draw(void) {
+    public void AddPrimitive(GraphicPrimitive primitive)
+    {
+        Primitives.Add(primitive);
+    }
+
+    public override void Draw()
+    {
+        foreach (var primitive in Primitives)
+        {
+            primitive.Draw();
+        }
+    }
+
+    public override void Move(int x, int y)
+    {
+        X += x;
+        Y += y;
+
+        foreach (var primitive in Primitives)
+        {
+            primitive.Move(x, y);
+        }
+    }
 }
 
-typedef struct {
-    GraphicPrimitive primitive;
-    GraphicPrimitive** elements;
-    int num_elements;
-} Group;
+class GraphicsEditor
+{
+    private List<GraphicPrimitive> Primitives = new List<GraphicPrimitive>();
 
-void group_draw(void) {
+    public void AddPrimitive(GraphicPrimitive primitive)
+    {
+        Primitives.Add(primitive);
+    }
+
+    public void DrawAll()
+    {
+        foreach (var primitive in Primitives)
+        {
+            primitive.Draw();
+        }
+    }
+
+    public void MoveAll(int x, int y)
+    {
+        foreach (var primitive in Primitives)
+        {
+            primitive.Move(x, y);
+        }
+    }
 }
 
-void group_move(int x, int y) {
-}
+class Program
+{
+    static void Main()
+    {
+        GraphicsEditor editor = new GraphicsEditor();
 
-void scale_circle(Circle* circle, float factor) {
-}
+        Circle circle = new Circle { X = 10, Y = 10, Radius = 5 };
+        Rectangle rectangle = new Rectangle { X = 20, Y = 20, Width = 8, Height = 6 };
+        Triangle triangle = new Triangle { X = 30, Y = 30 };
+        Group group = new Group { X = 40, Y = 40 };
 
-void scale_rectangle(Rectangle* rectangle, float factor) {
-}
+        group.AddPrimitive(circle);
+        group.AddPrimitive(rectangle);
+        group.AddPrimitive(triangle);
 
-int main() {
+        editor.AddPrimitive(group);
+        editor.AddPrimitive(new Circle { X = 50, Y = 50, Radius = 3 });
+
+        editor.DrawAll();
+        editor.MoveAll(5, 5);
+        editor.DrawAll();
+    }
 }
